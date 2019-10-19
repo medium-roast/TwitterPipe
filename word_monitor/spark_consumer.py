@@ -38,9 +38,10 @@ def construct_plot(counts):
     plt.savefig('feelingAnalysis.png')
 
 def main():
-    # load
-    nfeeling_words = load_word_list("/home/shuqingchen2401/spark/Dataset/nFeeling.txt")
-    pfeeling_words = load_word_list("/home/shuqingchen2401/spark/Dataset/pFeeling.txt")
+    # load positive/negative word list
+    # Use absolute file paths if necessary
+    nfeeling_words = load_word_list("../word_monitor/dataset/nFeeling.txt")
+    pfeeling_words = load_word_list("../word_monitor/dataset/pFeeling.txt")
         
     # Initialize spark streaming context
     conf = SparkConf().setAppName("TwitterStreamApplication")
