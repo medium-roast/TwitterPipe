@@ -8,7 +8,7 @@
 :-------------------------:
 | <em>Project diagram of popular_hashtags</em> |
  
- * `word_monitor` implements a positive/negative word monitor for public tweets using Kafka and Spark. Kafka serves as a message broker that is highly efficient for large-scale data processing. In this project, Kafka takes the Twitter APIs as the producer and Spark as the consumer. Spark reads data from Kafka and performs microbatch processing every second. The program runs for 10 seconds by default and produces a plot showing the positive/negative word counts in every second during that period. 
+ * `word_monitor` implements a positive/negative word monitor for public tweets using Kafka and Spark. Kafka serves as a message broker that is highly efficient for large-scale data processing. In this project, we create a topic `twitter-stream` in Kafka to store twitter stream data. The producer (Twitter APIs) writes to that topic; the consumer (Spark) reads data from the same topic and performs microbatch processing every second. The program runs for 10 seconds by default and produces a plot showing the positive/negative word counts in every second during that period. 
  
 | <img src="demo/diagram2.PNG" width="600"> |
 :-------------------------:
@@ -18,24 +18,24 @@
  Data processing scripts are written in Python.
  * [`popular_hashtags`](popular_hashtags) - data pipeline for popular Twitter hashtags
     - `twitter_to_spark.py` - establishs the data stream from Twitter APIs to Spark
-    - `spark_process.py`- processes data using Spark and forward the results to Flask server
+    - `spark_process.py` - processes data using Spark and forward the results to Flask server
     - `visualize/app.py` - Flask server 
  * [`word_monitor`](word_monitor) - positive/negative word monitor
     - `kafka_listener.py` - establishs the data stream from Twitter APIs to Kafka
-    - `spark_consumer.py`- reads data from Kafka, processes data using Spark and produces the plot using `matplotlib`
+    - `spark_consumer.py` - reads data from Kafka, processes data using Spark and produces the plot using `matplotlib`
     - [dataset](word_monitor/dataset) - contains positive/negative word lists
  
  ## Usage
  * You need to register a Twitter developer account at [https://developer.twitter.com/](https://developer.twitter.com/) and create your own app to get the keys and tokens for accessing the Twitter APIs. Substitute your keys and tokens in `twitter_to_spark.py` and `kafka_listener.py`. <br />
  * Install Scala and JDK on your machine. This is because Spark is written in Scala, which uses the compiler provided by JDK. Also check your Python version to make sure you are using Python2. <br />
  * Download Spark and Kafka in the root directory of this project. For Linux, run
-```
-wget https://archive.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
-tar -xvzf spark-2.4.4-bin-hadoop2.7.tgz
+ ```
+ wget https://archive.apache.org/dist/spark/spark-2.4.4/spark-2.4.4-bin-hadoop2.7.tgz
+ tar -xvzf spark-2.4.4-bin-hadoop2.7.tgz
 
-wget https://archive.apache.org/dist/kafka/2.3.0/kafka_2.11-2.3.0.tgz
-tar -xvzf kafka_2.11-2.3.0.tgz
-```
+ wget https://archive.apache.org/dist/kafka/2.3.0/kafka_2.11-2.3.0.tgz
+ tar -xvzf kafka_2.11-2.3.0.tgz
+ ```
 * For `popular_hashtags`:
     - Start the pipeline:
     ```
@@ -70,13 +70,13 @@ tar -xvzf kafka_2.11-2.3.0.tgz
     cd spark-2.4.4-bin-hadoop2.7
     bin/spark-submit --packages org.apache.spark:spark-streaming-kafka-0-8_2.11:2.4.4 ../word_monitor/spark_consumer.py
     ```
-    The `spark_consumer` program will run for 10 seconds. This duration can be modified by sepecifying the input to [`ssc.awaitTerminationOrTimeout()`](https://github.com/medium-roast/TwitterPipe/blob/532048beb45bb28041bb94b43c219a829fac16dc/word_monitor/spark_consumer.py#L65) in `spark_consumer.py`. You will see the generated file `feelingAnalysis.png` under your current directory. 
-    - Stop the pipeline using `Ctrl + C` for `kafka_listener.py`. To stop your Kafka server, use `ps` command to find PID of your Kafka and Zookeeper process, then use `kill` command to stop it.
+     The `spark_consumer` program will run for 10 seconds. This duration can be modified by sepecifying the input to [`ssc.awaitTerminationOrTimeout()`](https://github.com/medium-roast/TwitterPipe/blob/532048beb45bb28041bb94b43c219a829fac16dc/word_monitor/spark_consumer.py#L65) in `spark_consumer.py`. You will see the generated file `feelingAnalysis.png` under your current directory. 
+    <br />
+    - Stop the pipeline using `Ctrl + C` for `kafka_listener.py`. To stop your Kafka server, use `ps` command to find PID of your Kafka and Zookeeper processes, then use `kill` command to stop them (stop Zookeeper first).
     ```
     ps aux
     kill -9 <PID>
     ```
-    
     
 ## Demo
 | <img src="demo/demo-twitterpipe.png" width="700"> |
